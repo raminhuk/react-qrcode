@@ -1,34 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import { useState } from 'react';
+import QRCode from 'react-qr-code';
+import QRCodeLink from 'qrcode'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [link, setLink] = useState('Fabra Code');
+    const [qrcodeLink, setQrcodeLink] = useState('');
 
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    function handleQrcode(e) {
+        setLink(e.target.value);
+        handleGenerate(e.target.value);
+    }
+
+    function handleGenerate(linkURL) {
+        QRCodeLink.toDataURL(linkURL, {
+            width: 800,
+            margin: 3,
+        }, function (err, url){
+            if (err) return console.error(err, 'Opss tivemos um problema');
+            setQrcodeLink(url);
+        })
+    }
+
+    return (
+        <div className="container">
+            <div className="logo">
+                <img src="logo.png" alt="Fabra Code"/>
+            </div>
+
+            <div className="box">
+                <div className="qr-code">
+                    <QRCode
+                        size={280}
+                        value={link}
+                    />
+                </div>
+                
+                <div className="box-input">
+                    <input
+                        className="input"
+                        placeholder="Digite um texto"
+                        onChange={ (e) => handleQrcode(e)}
+                    />
+                    <a href={qrcodeLink} download={`qrcode.png`}>Baixar QR Code</a>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default App
